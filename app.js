@@ -42,16 +42,27 @@ async function generatePdf(templatePath, outputPath, name) {
 
   // Save the modified PDF
   const modifiedPdfBytes = await pdfDoc.save();
-  await fs.writeFile(outputPath, modifiedPdfBytes);
+  await createFolderIfNotExists(outputPath);
+  await fs.writeFile(outputPath + "/result.pdf", modifiedPdfBytes);
 }
 
 const templatePath = "input/template.pdf";
-const outputPath = "output/result.pdf";
+const outputPath = "output";
 const name = "Johnny Sins";
 
 generatePdf(templatePath, outputPath, name)
   .then(() => console.log("PDF generated successfully"))
   .catch((error) => console.error("Error generating PDF:", error));
+
+async function createFolderIfNotExists(folderPath) {
+  try {
+    // Check if the folder exists
+    await fs.access(folderPath);
+  } catch (error) {
+    // Folder doesn't exist, create it
+    await fs.mkdir(folderPath);
+  }
+}
 
 function getCurrentDate() {
   const currentDate = new Date();
